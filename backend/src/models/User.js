@@ -20,7 +20,7 @@ userSchema.pre('save', async function (next) {
   
   // Hash with a salt round of 12 (industry standard)
   this.password = await bcrypt.hash(this.password, 12);
-  next();
+  
 });
 
 // Instance Method: Safely compare an incoming password guess with the hashed password

@@ -6,10 +6,10 @@ import cookieParser from 'cookie-parser';
 import env from './config/env.js';
 
 // --- Route Imports ---
-// import authRouter from './routes/authRoutes.js';
-// import userRouter from './routes/userRoutes.js';
-// import transactionRouter from './routes/transactionRoutes.js';
-// import dashboardRouter from './routes/dashboardRoutes.js';
+import authRouter from './routes/authRoutes.js';
+import userRouter from './routes/userRoutes.js';
+import transactionRouter from './routes/transactionRoutes.js';
+import dashboardRouter from './routes/dashboardRoutes.js';
 
 // --- Error Handler Import ---
 import { errorHandler } from './middlewares/errorHandler.js';
@@ -35,10 +35,10 @@ app.use(express.urlencoded({ extended: true, limit: '16kb' }));
 app.use(cookieParser()); 
 
 // --- API Routes ---
-// app.use('/api/v1/auth', authRouter);
-// app.use('/api/v1/users', userRouter);              // Admin user management
-// app.use('/api/v1/transactions', transactionRouter); // Financial records
-// app.use('/api/v1/dashboard', dashboardRouter);      // Aggregation pipelines
+app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/users', userRouter);              // Admin user management
+app.use('/api/v1/transactions', transactionRouter); // Financial records
+app.use('/api/v1/dashboard', dashboardRouter);      // Aggregation pipelines
 
 // --- Base Health Check ---
 app.get('/', (req, res) => {
