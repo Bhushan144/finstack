@@ -16,7 +16,7 @@ const Navbar = () => {
   const title = pageTitles[location.pathname] || 'finStack';
 
   return (
-    <header className="h-16 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-6">
+    <header className="h-16 bg-zinc-900 border-b border-zinc-800 flex items-center justify-between px-6 sticky top-0 z-10">
 
       {/* Page title */}
       <h1 className="text-lg font-semibold text-zinc-100">{title}</h1>

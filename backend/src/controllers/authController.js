@@ -5,10 +5,10 @@ import { asyncHandler } from '../utils/asyncHandler.js';
 import { sendSuccess, sendError } from '../utils/apiResponse.js';
 
 // Helper: Generate Access & Refresh Tokens
-const generateTokens = (userId, role) => {
-  const accessToken = jwt.sign({ id: userId, role }, env.ACCESS_TOKEN_SECRET, { expiresIn: env.ACCESS_TOKEN_EXPIRY });
+const generateTokens = (userId, role, name) => {
+  const accessToken = jwt.sign({ id: userId, role, name }, env.ACCESS_TOKEN_SECRET, { expiresIn: env.ACCESS_TOKEN_EXPIRY });
 
-  const refreshToken = jwt.sign({ id: userId, role }, env.REFRESH_TOKEN_SECRET, { expiresIn: env.REFRESH_TOKEN_EXPIRY });
+  const refreshToken = jwt.sign({ id: userId, role, name }, env.REFRESH_TOKEN_SECRET, { expiresIn: env.REFRESH_TOKEN_EXPIRY });
 
   return { accessToken, refreshToken };
 };
@@ -35,7 +35,7 @@ const parseExpiryToMs = (expiryString) => {
 const cookieOptions = {
   httpOnly: true, // Prevents XSS attacks
   secure: env.NODE_ENV === 'production',
-  sameSite: 'strict',
+  sameSite: 'lax',
   maxAge: parseExpiryToMs(env.REFRESH_TOKEN_EXPIRY) // Dynamically parsed from .env
 };
 
@@ -60,7 +60,7 @@ export const login = asyncHandler(async (req, res) => {
   }
 
   // 1. Generate Tokens
-  const { accessToken, refreshToken } = generateTokens(user._id, user.role);
+  const { accessToken, refreshToken } = generateTokens(user._id, user.role, user.name);
 
   // 2. STATEFUL FIX: Save the refresh token to the database
   user.refreshToken = refreshToken;
@@ -86,7 +86,7 @@ export const refresh = asyncHandler(async (req, res) => {
     }
 
     // 3. Re-issue fresh Access Token (and optionally a new Refresh Token, though keeping the current one is fine for this scope)
-    const accessToken = jwt.sign({ id: user._id, role: user.role }, env.ACCESS_TOKEN_SECRET, { expiresIn: env.ACCESS_TOKEN_EXPIRY });
+    const accessToken = jwt.sign({ id: user._id, role: user.role, name: user.name }, env.ACCESS_TOKEN_SECRET, { expiresIn: env.ACCESS_TOKEN_EXPIRY });
     
     sendSuccess(res, { accessToken }, 'Token refreshed successfully');
   } catch (error) {

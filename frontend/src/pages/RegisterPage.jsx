@@ -52,26 +52,10 @@ const RegisterPage = () => {
     }
   };
 
-  // Reusable input field to avoid repetition
-  const InputField = ({ label, name, type = 'text', placeholder }) => (
-    <div className="flex flex-col gap-1.5">
-      <label className="text-sm text-zinc-400">{label}</label>
-      <input
-        type={type}
-        name={name}
-        value={form[name]}
-        onChange={handleChange}
-        placeholder={placeholder}
-        className={`bg-zinc-800 border rounded-lg px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-blue-500 transition-colors ${
-          errors[name] ? 'border-rose-500' : 'border-zinc-700'
-        }`}
-      />
-      {/* Inline field error */}
-      {errors[name] && (
-        <p className="text-xs text-rose-400">{errors[name]}</p>
-      )}
-    </div>
-  );
+  const inputClass = (fieldName) =>
+    `bg-zinc-800 border rounded-lg px-4 py-2.5 text-sm text-zinc-100 placeholder-zinc-500 outline-none focus:border-blue-500 transition-colors ${
+      errors[fieldName] ? 'border-rose-500' : 'border-zinc-700'
+    }`;
 
   return (
     <div className="min-h-screen bg-zinc-950 flex items-center justify-center px-4">
@@ -96,23 +80,53 @@ const RegisterPage = () => {
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
 
-            <InputField
-              label="Full Name"
-              name="name"
-              placeholder="John Doe"
-            />
-            <InputField
-              label="Email"
-              name="email"
-              type="email"
-              placeholder="you@example.com"
-            />
-            <InputField
-              label="Password"
-              name="password"
-              type="password"
-              placeholder="Min. 8 characters"
-            />
+            {/* Full Name */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm text-zinc-400">Full Name</label>
+              <input
+                type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
+                placeholder="John Doe"
+                className={inputClass('name')}
+              />
+              {errors.name && (
+                <p className="text-xs text-rose-400">{errors.name}</p>
+              )}
+            </div>
+
+            {/* Email */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm text-zinc-400">Email</label>
+              <input
+                type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
+                placeholder="you@example.com"
+                className={inputClass('email')}
+              />
+              {errors.email && (
+                <p className="text-xs text-rose-400">{errors.email}</p>
+              )}
+            </div>
+
+            {/* Password */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-sm text-zinc-400">Password</label>
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={handleChange}
+                placeholder="Min. 8 characters"
+                className={inputClass('password')}
+              />
+              {errors.password && (
+                <p className="text-xs text-rose-400">{errors.password}</p>
+              )}
+            </div>
 
             {/* Role note */}
             <p className="text-xs text-zinc-500 -mt-2">

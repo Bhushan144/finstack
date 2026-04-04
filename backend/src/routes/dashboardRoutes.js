@@ -9,6 +9,6 @@ const router = Router();
 router.use(authenticate);
 
 // Only Admins and Analysts can view the dashboard summaries
-router.get('/', requireRole(['ADMIN', 'ANALYST']), dashboardController.getDashboardSummary);
+router.get('/', requireRole(['ADMIN', 'ANALYST', 'VIEWER']), dashboardController.getDashboardSummary);
 
 export default router;

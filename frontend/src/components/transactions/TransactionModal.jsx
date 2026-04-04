@@ -7,17 +7,17 @@ const CATEGORIES = [
   'Healthcare', 'Software Subscriptions', 'Other'
 ];
 
-// Default empty form state
-const emptyForm = {
+// Build a fresh empty form with today's date
+const getEmptyForm = () => ({
   type:     'EXPENSE',
   amount:   '',
   category: 'Food',
   note:     '',
-  date:     new Date().toISOString().split('T')[0], // today as default
-};
+  date:     new Date().toISOString().split('T')[0],
+});
 
 const TransactionModal = ({ isOpen, onClose, onSubmit, editData }) => {
-  const [form, setForm]     = useState(emptyForm);
+  const [form, setForm]     = useState(getEmptyForm);
   const [error, setError]   = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -32,7 +32,7 @@ const TransactionModal = ({ isOpen, onClose, onSubmit, editData }) => {
         date:     editData.date.split('T')[0],
       });
     } else {
-      setForm(emptyForm);
+      setForm(getEmptyForm());
     }
     setError('');
   }, [editData, isOpen]);

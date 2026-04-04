@@ -27,8 +27,8 @@ const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDe
               <th className="text-left px-5 py-3 font-medium">Date</th>
               <th className="text-left px-5 py-3 font-medium">Note</th>
               <th className="text-right px-5 py-3 font-medium">Amount</th>
-              {/* Only show actions column to Admin */}
-              {isAdmin && (
+              {/* Show actions column to Admin and Analyst */}
+              {(isAdmin || isAnalyst) && (
                 <th className="text-right px-5 py-3 font-medium">Actions</th>
               )}
             </tr>
@@ -64,25 +64,25 @@ const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDe
                   {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(tx.amount)}
                 </td>
 
-                {/* Edit + Delete — Admin only */}
-                {isAdmin && (
+                {/* Edit + Delete — Admin and Analyst */}
+                {(isAdmin || isAnalyst) && (
                   <td className="px-5 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      {/* Analysts can also edit — show edit to both */}
-                      {(isAdmin || isAnalyst) && (
+                      <button
+                        onClick={() => onEdit(tx)}
+                        className="text-xs text-zinc-400 hover:text-blue-400 transition-colors px-2 py-1 rounded hover:bg-blue-500/10"
+                      >
+                        Edit
+                      </button>
+                      {/* Only Admin can delete financial records */}
+                      {isAdmin && (
                         <button
-                          onClick={() => onEdit(tx)}
-                          className="text-xs text-zinc-400 hover:text-blue-400 transition-colors px-2 py-1 rounded hover:bg-blue-500/10"
+                          onClick={() => onDelete(tx._id)}
+                          className="text-xs text-zinc-400 hover:text-rose-400 transition-colors px-2 py-1 rounded hover:bg-rose-500/10"
                         >
-                          Edit
+                          Delete
                         </button>
                       )}
-                      <button
-                        onClick={() => onDelete(tx._id)}
-                        className="text-xs text-zinc-400 hover:text-rose-400 transition-colors px-2 py-1 rounded hover:bg-rose-500/10"
-                      >
-                        Delete
-                      </button>
                     </div>
                   </td>
                 )}

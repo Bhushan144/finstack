@@ -50,7 +50,7 @@ const Sidebar = () => {
     }`;
 
   return (
-    <aside className="w-60 min-h-screen bg-zinc-900 border-r border-zinc-800 flex flex-col">
+    <aside className="w-60 h-screen bg-zinc-900 border-r border-zinc-800 flex flex-col sticky top-0">
 
       {/* Logo */}
       <div className="px-6 py-5 border-b border-zinc-800">
@@ -71,7 +71,7 @@ const Sidebar = () => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+      <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
 
         {/* Dashboard — visible to everyone */}
         <NavLink to="/dashboard" className={linkClass}>

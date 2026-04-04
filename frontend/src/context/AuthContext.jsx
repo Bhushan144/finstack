@@ -5,7 +5,7 @@ import api, { setAccessToken } from '../api/axios';
 export const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser]         = useState(null);  // { id, name, role }
+  const [user, setUser] = useState(null);  // { id, name, role }
   const [isLoading, setIsLoading] = useState(true); // waiting for silent refresh
 
   // On page load — check if the refresh token cookie is still valid
@@ -17,14 +17,14 @@ export const AuthProvider = ({ children }) => {
         const token = data.data.accessToken;
         setAccessToken(token);
 
-        // Decode the JWT payload to get user info (no library needed)
         const payload = JSON.parse(atob(token.split('.')[1]));
-        setUser({ id: payload.id, role: payload.role });
+        setUser({ id: payload.id, role: payload.role, name: payload.name });
       } catch {
-        // Cookie expired or missing — user must log in
+        // Normal — no cookie means not logged in, just show the login page
         setUser(null);
+        setAccessToken(null);
       } finally {
-        setIsLoading(false);
+        setIsLoading(false); // ← this MUST always run
       }
     };
 
@@ -62,9 +62,9 @@ export const AuthProvider = ({ children }) => {
   };
 
   // ── Simple role booleans (easier to use in components) ──────────────────────
-  const isAdmin   = user?.role === 'ADMIN';
+  const isAdmin = user?.role === 'ADMIN';
   const isAnalyst = user?.role === 'ANALYST';
-  const isViewer  = user?.role === 'VIEWER';
+  const isViewer = user?.role === 'VIEWER';
 
   return (
     <AuthContext.Provider value={{

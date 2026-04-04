@@ -14,13 +14,10 @@ const userSchema = new mongoose.Schema(
 );
 
 // Mongoose Pre-Save Hook: Automatically hash the password before saving
-userSchema.pre('save', async function (next) {
-  // Only hash the password if it has been modified (or is new)
-  if (!this.isModified('password')) return next();
-  
-  // Hash with a salt round of 12 (industry standard)
+userSchema.pre('save', async function () {
+  if (!this.isModified('password')) return;
   this.password = await bcrypt.hash(this.password, 12);
-  
+  // No next() needed with async hooks
 });
 
 // Instance Method: Safely compare an incoming password guess with the hashed password

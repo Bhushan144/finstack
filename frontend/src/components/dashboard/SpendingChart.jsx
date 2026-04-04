@@ -14,12 +14,14 @@ const transformData = (trend) => {
 
   trend.forEach(({ year, month, type, total }) => {
     const key = `${MONTHS[month - 1]} ${year}`;
-    if (!map[key]) map[key] = { month: key, INCOME: 0, EXPENSE: 0 };
+    if (!map[key]) map[key] = { month: key, _year: year, _month: month, INCOME: 0, EXPENSE: 0 };
     map[key][type] = total;
   });
 
-  // Sort chronologically
-  return Object.values(map);
+  // Sort chronologically by year then month
+  return Object.values(map)
+    .sort((a, b) => a._year - b._year || a._month - b._month)
+    .map(({ _year, _month, ...rest }) => rest);
 };
 
 // Custom tooltip so it matches our dark theme

@@ -1,5 +1,5 @@
 // src/pages/UsersPage.jsx
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { useAuth } from '../hooks/useAuth';
 import { formatDate } from '../utils/formatters';
@@ -19,7 +19,7 @@ const UsersPage = () => {
   const [saving, setSaving]         = useState(false);
 
   // ── Fetch all users ──────────────────────────────────────────────────────────
-  const fetchUsers = async () => {
+  const fetchUsers = useCallback(async () => {
     setLoading(true);
     setError('');
     try {
@@ -30,11 +30,11 @@ const UsersPage = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
 
   // ── Start editing a row ──────────────────────────────────────────────────────
   const handleEditStart = (user) => {

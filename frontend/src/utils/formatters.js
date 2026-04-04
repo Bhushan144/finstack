@@ -2,6 +2,7 @@
 
 // Format a number as currency  e.g. 5000 → ₹5,000
 export const formatCurrency = (amount) => {
+  if (amount == null || isNaN(amount)) return '₹0';
   return new Intl.NumberFormat('en-IN', {
     style:    'currency',
     currency: 'INR',
@@ -11,7 +12,10 @@ export const formatCurrency = (amount) => {
 
 // Format a date string  e.g. "2024-03-15" → "Mar 15, 2024"
 export const formatDate = (dateString) => {
-  return new Date(dateString).toLocaleDateString('en-IN', {
+  if (!dateString) return '—';
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return '—';
+  return date.toLocaleDateString('en-IN', {
     year:  'numeric',
     month: 'short',
     day:   'numeric',

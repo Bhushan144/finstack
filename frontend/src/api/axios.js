@@ -1,19 +1,17 @@
 // src/api/axios.js
 import axios from 'axios';
 
-// Create a single axios instance used everywhere in the app
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // sends the HttpOnly refresh token cookie automatically
+  withCredentials: true,
 });
 
-// We store the access token in a simple variable (not localStorage — safer)
 let accessToken = null;
 
 export const setAccessToken = (token) => { accessToken = token; };
 export const getAccessToken = () => accessToken;
 
-// Before every request — attach the token if we have one
+// Attach token to every request
 api.interceptors.request.use((config) => {
   if (accessToken) {
     config.headers.Authorization = `Bearer ${accessToken}`;
@@ -21,30 +19,35 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// After every response — if we get a 401, try to refresh the token once
+// Handle 401 responses
 api.interceptors.response.use(
-  (response) => response, // success — pass it through
+  (response) => response,
 
   async (error) => {
     const originalRequest = error.config;
 
-    // Only handle 401 errors, and don't retry the refresh call itself
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true; // mark so we don't loop forever
+    const isRefreshCall = originalRequest.url.includes('/auth/refresh');
+    const is401         = error.response?.status === 401;
+    const notRetried    = !originalRequest._retry;
+
+    // If the refresh call itself fails — give up, don't retry
+    if (isRefreshCall) {
+      setAccessToken(null);
+      window.dispatchEvent(new CustomEvent('auth:logout'));
+      return Promise.reject(error);
+    }
+
+    // For any other 401 — try to refresh once
+    if (is401 && notRetried) {
+      originalRequest._retry = true;
 
       try {
-        // Ask the backend for a new access token using the cookie
         const { data } = await api.post('/auth/refresh');
-        const newToken = data.data.accessToken;
-
+        const newToken  = data.data.accessToken;
         setAccessToken(newToken);
-
-        // Retry the original request with the new token
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
         return api(originalRequest);
-
       } catch {
-        // Refresh failed — force the user to log in again
         setAccessToken(null);
         window.dispatchEvent(new CustomEvent('auth:logout'));
         return Promise.reject(error);
