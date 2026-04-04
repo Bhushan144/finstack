@@ -1,30 +1,24 @@
-# Node modules
-node_modules/
-
-# Build output
-dist/
-build/
-
-# Environment variables
-.env
-.env.*
-
 # Logs
+logs
 *.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
-# OS files
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
 .DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/
-
-# Vite specific
-.vite/
-
-# Cache
-.cache/
-
-# Testing
-coverage/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
