@@ -34,8 +34,8 @@ const parseExpiryToMs = (expiryString) => {
 // Helper: Dynamic Cookie Options driven purely by .env
 const cookieOptions = {
   httpOnly: true, // Prevents XSS attacks
-  secure: true,
-  sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+  secure: env.NODE_ENV === 'production',
+  sameSite: 'lax',
   maxAge: parseExpiryToMs(env.REFRESH_TOKEN_EXPIRY) // Dynamically parsed from .env
 };
 
@@ -102,8 +102,8 @@ export const logout = asyncHandler(async (req, res) => {
   // 2. Define clear options (Stripping out maxAge)
   const clearOptions = {
     httpOnly: true,
-    secure: true,
-    sameSite: env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: env.NODE_ENV === 'production',
+    sameSite: 'lax',
   };
 
   // 3. Always clear the cookie on the client browser, even if DB fails
