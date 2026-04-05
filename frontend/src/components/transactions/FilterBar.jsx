@@ -1,29 +1,42 @@
 // src/components/transactions/FilterBar.jsx
 import { useState } from 'react';
+import { CATEGORIES } from '../../utils/constants';
 
 const FilterBar = ({ onFilter }) => {
-  const [filters, setFilters] = useState({
-    type:      '',
-    category:  '',
-    startDate: '',
-    endDate:   '',
-  });
+  const [type, setType]               = useState('');
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [startDate, setStartDate]     = useState('');
+  const [endDate, setEndDate]         = useState('');
+  const [showCatDropdown, setShowCatDropdown] = useState(false);
 
-  const handleChange = (e) => {
-    setFilters({ ...filters, [e.target.name]: e.target.value });
+  // Toggle a category in/out of the selected list
+  const toggleCategory = (cat) => {
+    setSelectedCategories((prev) =>
+      prev.includes(cat)
+        ? prev.filter((c) => c !== cat)  // remove if already selected
+        : [...prev, cat]                  // add if not selected
+    );
   };
 
   const handleApply = () => {
-    // Remove empty fields before sending to parent
-    const cleaned = Object.fromEntries(
-      Object.entries(filters).filter(([_, v]) => v !== '')
-    );
-    onFilter(cleaned);
+    const filters = {};
+    if (type)                        filters.type = type;
+    if (selectedCategories.length)   filters.category = selectedCategories.join(',');
+    if (startDate && endDate) {
+      filters.startDate = startDate;
+      filters.endDate   = endDate;
+    }
+    onFilter(filters);
+    setShowCatDropdown(false);
   };
 
   const handleReset = () => {
-    setFilters({ type: '', category: '', startDate: '', endDate: '' });
+    setType('');
+    setSelectedCategories([]);
+    setStartDate('');
+    setEndDate('');
     onFilter({});
+    setShowCatDropdown(false);
   };
 
   const inputClass =
@@ -36,9 +49,8 @@ const FilterBar = ({ onFilter }) => {
       <div className="flex flex-col gap-1.5">
         <label className="text-xs text-zinc-400">Type</label>
         <select
-          name="type"
-          value={filters.type}
-          onChange={handleChange}
+          value={type}
+          onChange={(e) => setType(e.target.value)}
           className={inputClass}
         >
           <option value="">All</option>
@@ -47,17 +59,72 @@ const FilterBar = ({ onFilter }) => {
         </select>
       </div>
 
-      {/* Category filter */}
-      <div className="flex flex-col gap-1.5">
+      {/* Category multi-select dropdown */}
+      <div className="flex flex-col gap-1.5 relative">
         <label className="text-xs text-zinc-400">Category</label>
-        <input
-          type="text"
-          name="category"
-          value={filters.category}
-          onChange={handleChange}
-          placeholder="e.g. Food"
-          className={inputClass}
-        />
+
+        {/* Trigger button */}
+        <button
+          type="button"
+          onClick={() => setShowCatDropdown((prev) => !prev)}
+          className={`${inputClass} flex items-center justify-between gap-4 min-w-44 text-left`}
+        >
+          <span className={selectedCategories.length ? 'text-zinc-100' : 'text-zinc-500'}>
+            {selectedCategories.length === 0
+              ? 'All categories'
+              : selectedCategories.length === 1
+              ? selectedCategories[0]
+              : `${selectedCategories.length} selected`}
+          </span>
+          {/* Chevron icon */}
+          <svg
+            width="14" height="14"
+            fill="none" stroke="currentColor" strokeWidth="2"
+            viewBox="0 0 24 24"
+            className={`text-zinc-400 transition-transform ${showCatDropdown ? 'rotate-180' : ''}`}
+          >
+            <polyline points="6 9 12 15 18 9"/>
+          </svg>
+        </button>
+
+        {/* Dropdown list */}
+        {showCatDropdown && (
+          <div className="absolute top-full mt-1 left-0 z-20 bg-zinc-800 border border-zinc-700 rounded-xl shadow-xl min-w-52 py-1">
+
+            {/* Select All / Clear All */}
+            <div className="flex items-center justify-between px-3 py-2 border-b border-zinc-700">
+              <button
+                onClick={() => setSelectedCategories([...CATEGORIES])}
+                className="text-xs text-blue-400 hover:text-blue-300 transition-colors"
+              >
+                Select all
+              </button>
+              <button
+                onClick={() => setSelectedCategories([])}
+                className="text-xs text-zinc-400 hover:text-zinc-200 transition-colors"
+              >
+                Clear
+              </button>
+            </div>
+
+            {/* Category checkboxes */}
+            {CATEGORIES.map((cat) => (
+              <label
+                key={cat}
+                className="flex items-center gap-2.5 px-3 py-2 hover:bg-zinc-700/50 cursor-pointer transition-colors"
+              >
+                <input
+                  type="checkbox"
+                  checked={selectedCategories.includes(cat)}
+                  onChange={() => toggleCategory(cat)}
+                  className="accent-blue-500 w-3.5 h-3.5"
+                />
+                <span className="text-sm text-zinc-200">{cat}</span>
+              </label>
+            ))}
+
+          </div>
+        )}
       </div>
 
       {/* Date range */}
@@ -65,9 +132,8 @@ const FilterBar = ({ onFilter }) => {
         <label className="text-xs text-zinc-400">From</label>
         <input
           type="date"
-          name="startDate"
-          value={filters.startDate}
-          onChange={handleChange}
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
           className={inputClass}
         />
       </div>
@@ -76,9 +142,8 @@ const FilterBar = ({ onFilter }) => {
         <label className="text-xs text-zinc-400">To</label>
         <input
           type="date"
-          name="endDate"
-          value={filters.endDate}
-          onChange={handleChange}
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
           className={inputClass}
         />
       </div>

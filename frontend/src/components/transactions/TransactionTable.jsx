@@ -2,21 +2,17 @@
 import { formatCurrency, formatDate } from '../../utils/formatters';
 import { useAuth } from '../../hooks/useAuth';
 
+// src/components/transactions/TransactionTable.jsx
+
 const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDelete }) => {
   const { isAdmin, isAnalyst } = useAuth();
 
-  if (!transactions?.length) {
-    return (
-      <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-10 text-center">
-        <p className="text-zinc-500 text-sm">No transactions found.</p>
-      </div>
-    );
-  }
+  const canEdit   = isAdmin || isAnalyst; // Analysts and Admins can edit
+  const canDelete = isAdmin;              // Only Admins can delete
+  const showActionsColumn = canEdit || canDelete; // show column if either is true
 
   return (
     <div className="bg-zinc-900 border border-zinc-800 rounded-xl overflow-hidden">
-
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
 
@@ -27,8 +23,7 @@ const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDe
               <th className="text-left px-5 py-3 font-medium">Date</th>
               <th className="text-left px-5 py-3 font-medium">Note</th>
               <th className="text-right px-5 py-3 font-medium">Amount</th>
-              {/* Show actions column to Admin and Analyst */}
-              {(isAdmin || isAnalyst) && (
+              {showActionsColumn && (
                 <th className="text-right px-5 py-3 font-medium">Actions</th>
               )}
             </tr>
@@ -53,10 +48,7 @@ const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDe
                 </td>
 
                 <td className="px-5 py-3.5 text-zinc-400">{formatDate(tx.date)}</td>
-
-                <td className="px-5 py-3.5 text-zinc-500 italic">
-                  {tx.note || '—'}
-                </td>
+                <td className="px-5 py-3.5 text-zinc-500 italic">{tx.note || '—'}</td>
 
                 <td className={`px-5 py-3.5 text-right font-semibold ${
                   tx.type === 'INCOME' ? 'text-emerald-400' : 'text-rose-400'
@@ -64,18 +56,23 @@ const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDe
                   {tx.type === 'INCOME' ? '+' : '-'}{formatCurrency(tx.amount)}
                 </td>
 
-                {/* Edit + Delete — Admin and Analyst */}
-                {(isAdmin || isAnalyst) && (
+                {/* Actions column */}
+                {showActionsColumn && (
                   <td className="px-5 py-3.5 text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <button
-                        onClick={() => onEdit(tx)}
-                        className="text-xs text-zinc-400 hover:text-blue-400 transition-colors px-2 py-1 rounded hover:bg-blue-500/10"
-                      >
-                        Edit
-                      </button>
-                      {/* Only Admin can delete financial records */}
-                      {isAdmin && (
+
+                      {/* Edit — Analysts and Admins */}
+                      {canEdit && (
+                        <button
+                          onClick={() => onEdit(tx)}
+                          className="text-xs text-zinc-400 hover:text-blue-400 transition-colors px-2 py-1 rounded hover:bg-blue-500/10"
+                        >
+                          Edit
+                        </button>
+                      )}
+
+                      {/* Delete — Admins only */}
+                      {canDelete && (
                         <button
                           onClick={() => onDelete(tx._id)}
                           className="text-xs text-zinc-400 hover:text-rose-400 transition-colors px-2 py-1 rounded hover:bg-rose-500/10"
@@ -83,16 +80,19 @@ const TransactionTable = ({ transactions, pagination, onPageChange, onEdit, onDe
                           Delete
                         </button>
                       )}
+
                     </div>
                   </td>
                 )}
+
               </tr>
             ))}
           </tbody>
+
         </table>
       </div>
 
-      {/* Pagination */}
+      {/* Pagination stays the same */}
       {pagination && pagination.totalPages > 1 && (
         <div className="flex items-center justify-between px-5 py-3 border-t border-zinc-800">
           <p className="text-xs text-zinc-500">

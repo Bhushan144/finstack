@@ -15,7 +15,13 @@ export const getAll = asyncHandler(async (req, res) => {
   const filter = { isDeleted: false };
 
   if (req.user.role !== 'ADMIN') filter.userId = req.user.id;
-  if (category) filter.category = category;
+  if (category) {
+    const categories = category.split(','); // ["Food", "Rent", "Transport"]
+
+    filter.category = categories.length === 1
+      ? categories[0]              // single → exact match
+      : { $in: categories };       // multiple → match any
+  }
   if (type) filter.type = type;
   if (startDate && endDate) {
     filter.date = { $gte: new Date(startDate), $lte: new Date(endDate) };
