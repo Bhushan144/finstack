@@ -31,7 +31,6 @@
 - [API Reference](#api-reference)
 - [Access Control Matrix](#access-control-matrix)
 - [Dashboard Aggregations](#dashboard-aggregations)
-- [Authentication Flow](#authentication-flow)
 - [Validation & Error Handling](#validation--error-handling)
 - [Optional Enhancements Implemented](#optional-enhancements-implemented)
 - [Local Setup](#local-setup)
