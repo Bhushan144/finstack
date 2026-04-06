@@ -5,9 +5,11 @@
 
 | | Link |
 |---|---|
-| 🌐 **Live Demo** | [finstackzorvyn.vercel.app](https://finstackzorvyn.vercel.app) |
+| 🌐 **Live Demo** | [finstackzorvyn.vercel.app](https://finstackzorvny.vercel.app) |
 | 🔧 **Backend API** | [finstack-backend-gj69.onrender.com](https://finstack-backend-gj69.onrender.com) |
 | 📂 **Repository** | [github.com/Bhushan144/finstack](https://github.com/Bhushan144/finstack) |
+
+> ⚠️ **Cold Start Notice:** The backend is hosted on Render's free tier which spins down after 15 minutes of inactivity. The first request after idle may take **30–60 seconds** to respond. Once the server is awake, all subsequent requests will be fast. Please wait a moment if the login appears slow.
 
 ### Demo Credentials (pre-seeded)
 

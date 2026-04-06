@@ -47,19 +47,19 @@ export const getDashboardSummary = asyncHandler(async (req, res) => {
       {
         $group: {
           _id: {
-            year:  { $year:  '$date' },
+            year: { $year: '$date' },
             month: { $month: '$date' },
-            type:  '$type'
+            type: '$type'
           },
           total: { $sum: '$amount' }
         }
       },
       {
         $project: {
-          _id:   0,
-          year:  '$_id.year',
+          _id: 0,
+          year: '$_id.year',
           month: '$_id.month',
-          type:  '$_id.type',
+          type: '$_id.type',
           total: 1
         }
       },
@@ -68,7 +68,7 @@ export const getDashboardSummary = asyncHandler(async (req, res) => {
 
   ]);
 
-  const income  = totals.find(t => t._id === 'INCOME')?.total  ?? 0;
+  const income = totals.find(t => t._id === 'INCOME')?.total ?? 0;
   const expense = totals.find(t => t._id === 'EXPENSE')?.total ?? 0;
 
   sendSuccess(res, {
@@ -79,6 +79,6 @@ export const getDashboardSummary = asyncHandler(async (req, res) => {
     },
     byCategory,
     recent,
-    trend        
+    trend
   }, 'Dashboard data fetched successfully');
 });
