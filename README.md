@@ -5,7 +5,7 @@
 
 | | Link |
 |---|---|
-| 🌐 **Live Demo** | [finstackzorvyn.vercel.app](https://finstackzorvny.vercel.app) |
+| 🌐 **Live Demo** | [finstackzorvyn.vercel.app](https://finstackzorvyn.vercel.app) |
 | 🔧 **Backend API** | [finstack-backend-gj69.onrender.com](https://finstack-backend-gj69.onrender.com) |
 | 📂 **Repository** | [github.com/Bhushan144/finstack](https://github.com/Bhushan144/finstack) |
 
